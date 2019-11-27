@@ -1,0 +1,30 @@
+name: "Create a Pull Request"
+on:
+  # This is just an example event that will create a PR when an
+  # issue is opened.
+  issues:
+    types: [opened]
+
+env:
+  NODE_VERSION: "10.x"
+
+jobs:
+  build-and-deploy:
+    name: Create PR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Process issue
+        run: |
+          # Run whatever you want and modify the filesystem, taking
+          # the information (json file) stored in $GITHUB_EVENT_PATH
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN_PERSONAL }}
+          title: ${{ github.event.issue.title }}
+          body: Closes \#${{ github.event.issue.number }}
