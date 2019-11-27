@@ -1,6 +1,9 @@
 name: Continuous Integration
 on: [push]
 
+# This workflow will build and test a Phoenix application that uses
+# PostgreSQL as a database. Will also cache dependencies and build
+# artifacts to speed up the build.
 jobs:
   test:
     env:
