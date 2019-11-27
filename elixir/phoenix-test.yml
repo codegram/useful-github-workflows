@@ -1,0 +1,50 @@
+name: Continuous Integration
+on: [push]
+
+jobs:
+  test:
+    env:
+      MIX_ENV: ci
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        image: postgres:11
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v1.0.0
+      - name: Recover dependency cache
+        uses: actions/cache@v1
+        with:
+          path: deps
+          key: ${{ runner.OS }}-deps-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.OS }}-deps-${{ env.cache-name }}-
+            ${{ runner.OS }}-deps-
+            ${{ runner.OS }}-
+      - name: Recover build cache
+        uses: actions/cache@v1
+        with:
+          path: _build
+          key: ${{ runner.OS }}-build-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.OS }}-build-
+            ${{ runner.OS }}-
+      - uses: actions/setup-elixir@v1.0.0
+        with:
+          otp-version: 22.x
+          elixir-version: 1.9.x
+      - run: mix deps.get
+      - run: mix compile
+      - run: mix ecto.migrate
+      - run: mix test --trace
