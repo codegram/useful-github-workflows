@@ -3,6 +3,14 @@ on:
   schedule:
     - cron: "0 0 * * *"
 
+env:
+  DAYS_BEFORE_STALE: 30
+  DAYS_BEFORE_CLOSE: 7
+  STALE_ISSUE_LABEL: 'no-issue-activity'
+  EXEMPT_ISSUE_LABEL: 'awaiting-approval'
+  STALE_PR_LABEL: 'no-pr-activity'
+  EXEMPT_PR_LABEL: 'awaiting-approval'
+
 jobs:
   stale:
     runs-on: ubuntu-latest
@@ -10,5 +18,11 @@ jobs:
       - uses: actions/stale@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          stale-issue-message: "Message to comment on stale issues. If none provided, will not mark issues stale"
-          stale-pr-message: "Message to comment on stale PRs. If none provided, will not mark PRs stale"
+          days-before-stale: ${{ env.DAYS_BEFORE_STALE }}
+          days-before-close: ${{ env.DAYS_BEFORE_CLOSE }}
+          stale-issue-message: "This issue has become stale after ${{ env.DAYS_BEFORE_STALE }} days of inactivity. If you don't want it to be marked as stale, please add the `awaiting-approval` label."
+          stale-pr-message: "This Pull Request has become stale after ${{ env.DAYS_BEFORE_STALE }} days of inactivity. If you don't want it to be marked as stale, please add the `awaiting-approval` label."
+          stale-issue-label: ${{ env.STALE_ISSUE_LABEL }}
+          exempt-issue-label: ${{ env.EXEMPT_ISSUE_LABEL }}
+          stale-pr-label: ${{ env.STALE_PR_LABEL }}
+          exempt-pr-label: ${{ env.EXEMPT_PR_LABEL }}
