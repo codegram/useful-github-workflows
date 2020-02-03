@@ -9,6 +9,7 @@ env:
   NODE_ENV: production
   BUILD_COMMAND: npm run build
   BUILD_DIR: dist
+  URLS: http://localhost:8000, http://localhost:8000/whatever
 
 jobs:
   lighthouse-check:
@@ -42,7 +43,7 @@ jobs:
           # Uncomment the line below to have the workflow report via PR comments.
           # accessToken: ${{ secrets.GITHUB_TOKEN }}
           # You can put several URLs (in fact it's a good idea) separating them by commas.
-          urls: 'http://localhost:8000, http://localhost:8000/whatever'
+          urls: ${{ env.URLS }}
       - name: Handle Lighthouse Check results
         uses: foo-software/lighthouse-check-status-action@master
         with:
